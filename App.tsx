@@ -165,7 +165,12 @@ const DashboardView = ({
     [KanbanColumnID.Ready]: shipments.filter(s => s.status === KanbanColumnID.Ready),
   };
   
-  const DashboardShipmentCard = ({shipment, onClick}: {shipment: Shipment, onClick: () => void}) => (
+  interface DashboardShipmentCardProps {
+    shipment: Shipment;
+    onClick: () => void;
+  }
+
+  const DashboardShipmentCard: React.FC<DashboardShipmentCardProps> = ({shipment, onClick}) => (
     <div onClick={onClick} className="p-2.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border dark:border-gray-200 dark:border-gray-700/50">
         <div className="flex justify-between items-center">
             <p className="font-semibold text-sm">{shipment.orderNumber}</p>
@@ -270,7 +275,12 @@ const DashboardView = ({
 };
 
 // --- KANBAN VIEW ---
-const KanbanCard = ({ shipment, onClick }: { shipment: Shipment, onClick: () => void }) => (
+interface KanbanCardProps {
+  shipment: Shipment;
+  onClick: () => void;
+}
+
+const KanbanCard: React.FC<KanbanCardProps> = ({ shipment, onClick }) => (
     <div 
       draggable="true"
       onDragStart={(e) => {
@@ -296,7 +306,14 @@ const KanbanCard = ({ shipment, onClick }: { shipment: Shipment, onClick: () => 
     </div>
 );
 
-const KanbanColumn = ({ title, shipments, onCardClick, onUpdateStatus }: { title: KanbanColumnID, shipments: Shipment[], onCardClick: (shipment: Shipment) => void, onUpdateStatus: (shipmentId: string, newStatus: KanbanColumnID) => void }) => {
+interface KanbanColumnProps {
+  title: KanbanColumnID;
+  shipments: Shipment[];
+  onCardClick: (shipment: Shipment) => void;
+  onUpdateStatus: (shipmentId: string, newStatus: KanbanColumnID) => void;
+}
+
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, shipments, onCardClick, onUpdateStatus }) => {
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
@@ -434,7 +451,15 @@ const KanbanView = ({ shipments, onCardClick, onUpdateStatus, onAddNew }: { ship
 
 
 // --- TODO VIEW ---
-const TodoItem = ({ task, onToggle, onToggleSubtask, onEdit, onDelete }: { task: Task, onToggle: (id: string) => void, onToggleSubtask: (taskId: string, subtaskId: string) => void, onEdit: (task: Task) => void, onDelete: (id: string) => void }) => {
+interface TodoItemProps {
+  task: Task;
+  onToggle: (id: string) => void;
+  onToggleSubtask: (taskId: string, subtaskId: string) => void;
+  onEdit: (task: Task) => void;
+  onDelete: (id: string) => void;
+}
+
+const TodoItem: React.FC<TodoItemProps> = ({ task, onToggle, onToggleSubtask, onEdit, onDelete }) => {
   const completedSubtasks = task.subTasks.filter(st => st.completed).length;
   
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useAuth, AuthProvider } from './contexts/AuthContext';
 import { AuthPage } from './pages/AuthPage';
 import { useShipments, useProfiles, useTasks, useNotes, useCustomers } from './hooks/useSupabaseData';
@@ -99,7 +99,20 @@ const Header: React.FC<{
   setSearchQuery: (query: string) => void;
   onSearch: () => void;
 }> = ({ title, isDarkMode, toggleDarkMode, searchQuery, setSearchQuery, onSearch }) => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setShowSettingsMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} border-b border-gray-200 dark:border-gray-700 p-4`}>
@@ -136,6 +149,52 @@ const Header: React.FC<{
           >
             <Icon name={isDarkMode ? 'sun' : 'moon'} />
           </button>
+
+          <div className="relative" ref={settingsRef}>
+            <button
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+              className="p-2 w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              <Icon name="settings" />
+            </button>
+
+            {showSettingsMenu && (
+              <div className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50 ${
+                isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+              }`}>
+                <div className="py-1">
+                  <div className={`px-4 py-2 text-sm border-b ${
+                    isDarkMode ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-700'
+                  }`}>
+                    {user?.user_metadata?.name || user?.email}
+                  </div>
+                  
+                  <button
+                    onClick={toggleDarkMode}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 ${
+                      isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Icon name={isDarkMode ? 'sun' : 'moon'} />
+                    <span>{isDarkMode ? 'Modalità chiara' : 'Modalità scura'}</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setShowSettingsMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 text-red-600 ${
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <Icon name="log-out" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
           
           <div className="flex items-center space-x-2">
             <Avatar 

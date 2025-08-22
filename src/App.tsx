@@ -159,9 +159,9 @@ const Header: React.FC<{
             </button>
 
             {showSettingsMenu && (
-              <div className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50 ${
+              <div className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg z-[9999] ${
                 isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
-              }`}>
+              } divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-100'}`}>
                 <div className="py-1">
                   <div className={`px-4 py-2 text-sm border-b ${
                     isDarkMode ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-700'
@@ -170,9 +170,12 @@ const Header: React.FC<{
                   </div>
                   
                   <button
-                    onClick={toggleDarkMode}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 ${
-                      isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
+                    onClick={() => {
+                      toggleDarkMode();
+                      setShowSettingsMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 transition-colors ${
+                      isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
                     <Icon name={isDarkMode ? 'sun' : 'moon'} />
@@ -184,7 +187,7 @@ const Header: React.FC<{
                       signOut();
                       setShowSettingsMenu(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 text-red-600 ${
+                    className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-2 text-red-600 transition-colors ${
                       isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                     }`}
                   >

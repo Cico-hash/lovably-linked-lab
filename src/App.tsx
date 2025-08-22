@@ -5,6 +5,7 @@ import { useShipments, useProfiles, useTasks, useNotes, useCustomers } from './h
 import { useToast } from './hooks/use-toast';
 import { Toaster } from './components/ui/toaster';
 import { Avatar } from './components/Avatar';
+import Chat from './components/Chat';
 // Define types inline for now
 type Priority = 'Alta' | 'Media' | 'Bassa';
 type KanbanColumnID = 'Spedizioni Ferme' | 'Spedizioni Future' | 'Ritira il Cliente';
@@ -391,6 +392,7 @@ const AppContent: React.FC = () => {
             {renderView()}
           </main>
         </div>
+        <Chat isDarkMode={isDarkMode} />
       </div>
     </div>
   );

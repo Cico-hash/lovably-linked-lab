@@ -4,6 +4,7 @@ import { AuthPage } from './pages/AuthPage';
 import { useShipments, useProfiles, useTasks, useNotes, useCustomers } from './hooks/useSupabaseData';
 import { useToast } from './hooks/use-toast';
 import { Toaster } from './components/ui/toaster';
+import { Avatar } from './components/Avatar';
 // Define types inline for now
 type Priority = 'Alta' | 'Media' | 'Bassa';
 type KanbanColumnID = 'Spedizioni Ferme' | 'Spedizioni Future' | 'Ritira il Cliente';
@@ -137,10 +138,12 @@ const Header: React.FC<{
           </button>
           
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-              {user?.email?.charAt(0).toUpperCase() || 'U'}
-            </div>
-            <span className="text-sm">{user?.email}</span>
+            <Avatar 
+              avatarUrl={user?.user_metadata?.avatar_url} 
+              name={user?.user_metadata?.name || user?.email || 'User'} 
+              size={32} 
+            />
+            <span className="text-sm">{user?.user_metadata?.name || user?.email}</span>
           </div>
         </div>
       </div>

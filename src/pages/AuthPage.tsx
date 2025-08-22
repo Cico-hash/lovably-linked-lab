@@ -1,63 +1,53 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { MultiStepRegistration } from '../components/MultiStepRegistration';
 
 export const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [view, setView] = useState<'login' | 'register' | 'multiStep'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn } = useAuth();
 
   // This component will be conditionally rendered by App.tsx
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isLogin) {
-        await signIn(email, password);
-      } else {
-        await signUp(email, password, name);
-      }
+      await signIn(email, password);
     } finally {
       setLoading(false);
     }
   };
 
+  if (view === 'multiStep') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted px-4">
+        <MultiStepRegistration 
+          onBack={() => setView('login')}
+          onSuccess={() => setView('login')}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted px-4">
+      <div className="max-w-md w-full bg-card rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Dashboard Logistica
           </h1>
-          <p className="text-gray-600">
-            {isLogin ? 'Accedi al tuo account' : 'Crea un nuovo account'}
+          <p className="text-muted-foreground">
+            Accedi al tuo account
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {!isLogin && (
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                Nome Completo
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Il tuo nome completo"
-                required
-              />
-            </div>
-          )}
-
+        <form onSubmit={handleLoginSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
               Email
             </label>
             <input
@@ -65,14 +55,14 @@ export const AuthPage: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="la-tua-email@esempio.com"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
               Password
             </label>
             <input
@@ -80,7 +70,7 @@ export const AuthPage: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="La tua password"
               required
               minLength={6}
@@ -90,9 +80,9 @@ export const AuthPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-primary text-primary-foreground py-2 px-4 rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Caricamento...' : (isLogin ? 'Accedi' : 'Registrati')}
+            {loading ? 'Caricamento...' : 'Accedi'}
           </button>
         </form>
 
@@ -100,21 +90,17 @@ export const AuthPage: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              setIsLogin(!isLogin);
+              setView('multiStep');
               setEmail('');
               setPassword('');
-              setName('');
             }}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="text-primary hover:text-primary/80 text-sm font-medium"
           >
-            {isLogin 
-              ? "Non hai un account? Registrati qui" 
-              : "Hai già un account? Accedi qui"
-            }
+            Non hai un account? Registrati qui
           </button>
         </div>
 
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>🚚 Sistema di gestione spedizioni e logistica</p>
         </div>
       </div>

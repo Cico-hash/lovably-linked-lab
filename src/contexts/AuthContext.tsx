@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, name?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, name?: string, avatarUrl?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -60,17 +60,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, [toast]);
 
-  const signUp = async (email: string, password: string, name?: string) => {
+  const signUp = async (email: string, password: string, name?: string, avatarUrl?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: name ? { name } : undefined
+        data: { 
+          name: name || email,
+          avatar_url: avatarUrl
+        }
       }
     });
+
+    // Se la registrazione è riuscita e l'utente è confermato immediatamente, aggiorna il profilo
+    if (!error && data.user && !data.user.email_confirmed_at) {
+      // L'utente deve confermare l'email
+    } else if (!error && data.user && data.user.email_confirmed_at) {
+      // L'utente è già confermato, aggiorna il profilo direttamente
+      await supabase
+        .from('profiles')
+        .update({ 
+          name: name || email,
+          avatar_url: avatarUrl 
+        })
+        .eq('id', data.user.id);
+    }
 
     if (error) {
       let message = "Errore durante la registrazione";

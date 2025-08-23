@@ -15,7 +15,6 @@ import { GmailView } from './views/GmailView';
 import { NotesView } from './views/NotesView';
 import Chat from './components/Chat';
 
-
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
   const [activeView, setActiveView] = useState('dashboard');
@@ -72,14 +71,14 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="flex">
+    <div className="min-h-screen w-full bg-background text-foreground">
+      <div className="flex h-screen w-full">
         <Sidebar 
           activeView={activeView} 
           setActiveView={setActiveView} 
         />
         
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col min-w-0">
           <Header
             title={getViewTitle(activeView)}
             searchQuery={searchQuery}
@@ -89,7 +88,7 @@ const AppContent: React.FC = () => {
             toggleDarkMode={toggleDarkMode}
           />
           
-          <main className="bg-background">
+          <main className="flex-1 overflow-y-auto bg-background">
             {renderView()}
           </main>
         </div>
@@ -99,7 +98,6 @@ const AppContent: React.FC = () => {
   );
 };
 
-// Main App component with providers
 const App: React.FC = () => {
   return (
     <AuthProvider>

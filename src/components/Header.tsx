@@ -38,9 +38,9 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   return (
-    <header className="bg-card text-card-foreground border-b border-border p-4">
+    <header className="bg-card text-card-foreground border-b border-border p-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-2xl font-bold text-primary">{title}</h2>
         
         <div className="flex items-center space-x-4">
           <div className="relative">
